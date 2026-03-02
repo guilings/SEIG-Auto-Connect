@@ -154,6 +154,10 @@ class watch_dog(QRunnable):
                 return False
 
     def run(self):
+        if state.enable_watch_dog == "0":
+            print("看门狗:已禁用看门狗功能，线程退出")
+            return
+        
         if state.watch_dog_thread_started == True:
             print("看门狗:线程已启动无需再次启动")
             return

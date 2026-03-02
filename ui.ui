@@ -321,23 +321,13 @@
           <property name="spacing">
            <number>6</number>
           </property>
-          <item row="2" column="1">
-           <widget class="QRadioButton" name="radioButton_3">
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="checkBox_2">
             <property name="toolTip">
-             <string>始终使用T模式，部分账号不支持此模式</string>
+             <string>开机自动启动，并且启动后自动登录</string>
             </property>
             <property name="text">
-             <string>T模式</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QRadioButton" name="radioButton_2">
-            <property name="toolTip">
-             <string>自动识别账号类型，使用对应的登录方式</string>
-            </property>
-            <property name="text">
-             <string>自动识别</string>
+             <string>自动登录</string>
             </property>
            </widget>
           </item>
@@ -348,13 +338,17 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QCheckBox" name="checkBox_2">
-            <property name="toolTip">
-             <string>开机自动启动，并且启动后自动登录</string>
-            </property>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="checkBox_dog">
             <property name="text">
-             <string>自动登录</string>
+             <string>看门狗</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="checkBox_t">
+            <property name="text">
+             <string>T模式</string>
             </property>
            </widget>
           </item>

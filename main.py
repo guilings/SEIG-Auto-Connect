@@ -85,17 +85,17 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     self.add_to_startup() if self.checkBox_2.isChecked() else self.add_to_startup(1)) or (self.update_config("save_pwd", 1))
         )
         self.checkBox_auto_share.clicked.connect(lambda: self.update_config(
-            "auto_share", True if self.checkBox_auto_share.isChecked() else False))
+            "auto_share", 1 if self.checkBox_auto_share.isChecked() else 0))
 
+        self.checkBox_t.clicked.connect(lambda: self.change_login_mode(1 if self.checkBox_t.isChecked() else 0))
+
+        self.checkBox_dog.clicked.connect(lambda: self.update_config(
+            "enable_watch_dog", 1 if self.checkBox_dog.isChecked() else 0) or (self.update_table("看门狗将在下次登录时开启，持续监测网络状态，根据网卡状态智能重连") if self.checkBox_dog.isChecked() else self.update_table("看门狗已禁用")))
+        
         self.pushButton_3.clicked.connect(
             lambda: web.open_new("https://cmxz.top"))
         self.run_settings_action.triggered.connect(self.run_settings)
         self.pushButton_4.clicked.connect(self.settings_window.mulit_login_now)
-
-        self.radioButton_2.toggled.connect(
-            lambda checked: checked and self.change_login_mode(0))
-        self.radioButton_3.toggled.connect(
-            lambda checked: checked and self.change_login_mode(1))
 
         self.update_table("感谢您使用此工具！\n请不要在任何大型社交平台\n(B站、贴吧、小红书、狐友等)\n讨论此工具！")
 
@@ -260,7 +260,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             ('wtg_timeout', 5, int),
             ('mulit_login', 1, int),
             ('login_mode', 0, int),
-            ('auto_share', False, bool),
+            ('enable_watch_dog', "1", str),
+            ('auto_share', "0", str),
         ]
 
         try:
@@ -275,8 +276,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             # 更新UI状态
             self.checkBox.setChecked(state.save_pwd == "1")
             self.checkBox_2.setChecked(state.auto_connect == "1")
-            self.radioButton_2.setChecked(state.login_mode == 0)
-            self.radioButton_3.setChecked(state.login_mode != 0)
+            self.checkBox_t.setChecked(state.login_mode != 0)
+            self.checkBox_dog.setChecked(state.enable_watch_dog == "1")
 
         except Exception as e:
             self.update_table(f"配置读取失败，已重置为默认值！{e} ")
@@ -515,9 +516,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.progressBar.hide()
 
     def update_table(self, text):
-        # 超过 500 行，就清空列表
-        if self.listWidget.count() >= 500:
-            self.listWidget.clear()
+        # 超过 300 行，就从前面开始删除
+        if self.listWidget.count() >= 300:
+            self.listWidget.takeItem(0)
 
         self.listWidget.addItem(text)
         self.listWidget.setCurrentRow(self.listWidget.count() - 1)
