@@ -170,8 +170,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         TASK_NAME = "InterKnot_Auth"
         def run(cmd):
-            return subprocess.run(cmd, capture_output=True, text=True)
-
+            return subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                creationflags=subprocess.CREATE_NO_WINDOW
+            )
+        
         # 当前程序路径
         app_path = sys.argv[0]
 
@@ -200,7 +205,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             "/Create",
             "/TN", TASK_NAME,
             "/TR", f'"{app_path}"',
-            "/SC", "ONSTART",      # 开机启动
+            "/SC", "ONLOGON",      # 开机启动
             "/RL", "HIGHEST",      # 最高权限
             "/F"
         ]

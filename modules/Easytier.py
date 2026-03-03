@@ -58,7 +58,8 @@ enable_ipv6 = {"true" if state.et_enable_ipv6 == "1" else "false"}
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             encoding="utf-8",
-            text=True
+            text=True,
+            creationflags=subprocess.CREATE_NO_WINDOW
         )
 
         output = True
