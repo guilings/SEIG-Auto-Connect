@@ -9,9 +9,10 @@ import os
 state = global_state()
 
 class easytier_thread(QRunnable):
-    def __init__(self):
+    def __init__(self, main_window):
         super().__init__()
         self.signals = WorkerSignals()
+        self.main_window = main_window
     def check_config_exist(self):
         easytier_config_path = os.path.join(state.config_dir, "easytier.toml")
 
@@ -50,7 +51,7 @@ enable_ipv6 = {"true" if state.et_enable_ipv6 == "1" else "false"}
         
         self.signals.print_text_et.emit(f"启动绳网共享进程...")
 
-        process = subprocess.Popen(
+        self.main_window.et_process = subprocess.Popen(
             [self.easytier_executable,
             "-c",
             os.path.join(state.config_dir, "easytier.toml")],
@@ -62,15 +63,18 @@ enable_ipv6 = {"true" if state.et_enable_ipv6 == "1" else "false"}
 
         output = True
 
-        for line in process.stdout:
+        for line in self.main_window.et_process.stdout:
             line = line.strip()
             lower_line = line.lower()
 
             # 先检测错误（不受 output 控制）
-            if "panic" in lower_line or "stopping" in lower_line:
+            if any(k in lower_line for k in ("panic", "stopping", "error")):
                 self.signals.print_text.emit(
-                    f"隧道出错：{line}，请切换至'隧道日志'查看详情！"
+                    f"隧道故障：{line}，请切换至'隧道日志'查看详情！"
                 )
+
+                if "stopping" in lower_line:
+                    self.signals.finished.emit()
 
             # 控制 TOML 屏蔽区
             if "############### TOML ###############" in line:

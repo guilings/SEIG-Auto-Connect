@@ -635,12 +635,32 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def start_easytier(self, start=False):
         if state.auto_share == "1" or start:
             try:
-                self.easytier_thread = easytier_thread()
+                self.pushButton_enable_share.setText("停止共享")
+                self.pushButton_enable_share.clicked.disconnect()
+                self.pushButton_enable_share.clicked.connect(lambda: self.stop_easytier())
+
+                self.et_process = None
+                self.easytier_thread = easytier_thread(self)
                 self.easytier_thread.signals.print_text.connect(self.update_list)
                 self.easytier_thread.signals.print_text_et.connect(self.update_et_list)
+                self.easytier_thread.signals.finished.connect(self.stop_easytier)
                 state.threadpool.start(self.easytier_thread)
             except Exception as e:
                 self.update_list(f"启动隧道失败：{e}")
+
+    def stop_easytier(self):
+        try:
+            if self.et_process is not None:
+                self.et_process.terminate()
+                self.et_process = None
+                self.update_list("已停止隧道")
+        
+                self.pushButton_enable_share.setText("启用共享")
+                self.pushButton_enable_share.clicked.disconnect()
+                self.pushButton_enable_share.clicked.connect(lambda: self.start_easytier(True))
+
+        except Exception as e:
+            self.update_list(f"停止隧道失败：{e}")
 
 class login_Retry_Thread(QRunnable):
     def __init__(self, times, parent=None):
