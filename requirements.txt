@@ -1,0 +1,11 @@
+requests
+rsa
+debugpy
+Pillow
+paddleocr
+paddlepaddle
+numpy
+PyQt5
+nuitka
+
+

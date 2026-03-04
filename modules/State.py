@@ -1,0 +1,77 @@
+# 管理全局变量
+import os
+from PyQt5.QtCore import QThreadPool
+
+
+class global_state:
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        if hasattr(self, '_initialized') and self._initialized:
+            return
+        self._initialized = True
+
+        self.version = 1.5
+
+        # 获取用户配置目录（跨平台）
+        self.config_path = None
+        import sys
+        if sys.platform == 'win32':
+            # Windows: C:\Users\<用户名>\AppData\Roaming
+            appdata_dir = os.getenv("APPDATA")
+            if appdata_dir is None:
+                # fallback if APPDATA is not set
+                appdata_dir = os.path.join(os.path.expanduser("~"), "AppData", "Roaming")
+        else:
+            # Linux/macOS: ~/.config
+            appdata_dir = os.path.join(os.path.expanduser("~"), ".config")
+
+        config_dir = os.path.join(appdata_dir, "SAC")
+        self.config_path = os.path.join(config_dir, "config.ini")
+
+        # 配置类变量
+        self.username = None
+        self.password = None
+        self.esurfingurl = None
+        self.wlanacip = None
+        self.wlanuserip = None
+        self.save_pwd = None
+        self.auto_connect = None
+        self.wtg_timeout = None
+        self.login_mode = 0
+        self.mulit_login = 1
+        self.mulit_info = {}
+
+        # 运行时变量
+        self.stop_watch_dog = False
+        self.connected = False
+        self.jar_login = False
+        self.signature = ""
+        self.retry_thread_started = False
+        self.stop_retry_thread = False
+        self.watch_dog_thread_started = False
+        self.new_version_checked = False
+        self.login_thread_finished = False
+        self.mulit_status = {}
+        self.mulit_login = False
+
+        # 初始化线程池
+        self.threadpool = QThreadPool()
+
+        # RSA公钥
+        self.rsa_public_key = """
+            -----BEGIN PUBLIC KEY-----
+            MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCyhncn4Z4RY8wITqV7n6hAapEM
+            ZwNBP6fflsGs3Ke5g6Ji4AWvNflIXZLNTGIuykoU1v2Bitylyuc9nSKLTvBdcytB
+            +4X4CvV4oVDr2aLrXs7LhTNyykcxyhyGhokph0Cb4yR/mybK6OeH2ME1/AZS7AZ4
+            pe2gw9lcwXQVF8DJwwIDAQAB
+            -----END PUBLIC KEY-----
+            """
+
+
+app_state = global_state()
